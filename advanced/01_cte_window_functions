@@ -1,0 +1,20 @@
+-- 01_cte_window_functions.sql
+-- Objetivo: CTE + funciones de ventana.
+
+-- 1) CTE para total por orden y ranking por total (desc).
+ WITH totals AS (
+   SELECT o.order_id, SUM(oi.quantity * oi.unit_price) AS total
+   FROM orders o
+   JOIN order_items oi ON oi.order_id = o.order_id
+   GROUP BY o.order_id
+ )
+ SELECT order_id, total,
+        RANK() OVER (ORDER BY total DESC) AS rnk
+ FROM totals
+ ORDER BY rnk;
+
+-- 2) Ranking de salarios por departamento.
+ SELECT e.department_id, e.first_name, e.last_name, e.salary,
+        RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS dep_rank
+ FROM employees e
+ ORDER BY e.department_id, dep_rank;

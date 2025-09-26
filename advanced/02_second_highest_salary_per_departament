@@ -1,0 +1,11 @@
+-- 02_second_highest_salary_per_department.sql
+-- Objetivo: segundo salario más alto por departamento (sin MAX anidado).
+
+ SELECT department_id, first_name, last_name, salary
+ FROM (
+   SELECT e.*,
+          DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS rnk
+   FROM employees e
+ ) t
+ WHERE rnk = 2
+ ORDER BY department_id, salary DESC;
