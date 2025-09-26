@@ -1,0 +1,17 @@
+-- 02_left_join.sql
+-- Objetivo: practicar LEFT JOIN y detectar órdenes sin pagos.
+
+-- 1) Listar todas las órdenes con el monto pagado (si lo hay).
+ SELECT o.order_id,
+        o.status,
+        COALESCE(SUM(p.amount), 0) AS paid_amount
+ FROM orders o
+ LEFT JOIN payments p ON p.order_id = o.order_id
+ GROUP BY o.order_id, o.status
+ ORDER BY o.order_id;
+
+-- 2) Mostrar órdenes 'PENDING' que no tengan ningún pago.
+ SELECT o.order_id, o.status
+ FROM orders o
+ LEFT JOIN payments p ON p.order_id = o.order_id
+ WHERE o.status = 'PENDING' AND p.payment_id IS NULL;
