@@ -1,0 +1,18 @@
+-- 01_groupby_having.sql
+-- Objetivo: agregaciones y HAVING.
+
+-- 1) Total facturado por cliente (considerando pagos).
+ SELECT c.customer_id, c.name, COALESCE(SUM(p.amount), 0) AS total_paid
+ FROM customers c
+ LEFT JOIN orders o ON o.customer_id = c.customer_id
+ LEFT JOIN payments p ON p.order_id = o.order_id
+ GROUP BY c.customer_id, c.name
+ ORDER BY total_paid DESC;
+
+-- 2) Categorías con facturación total > 100000.
+ SELECT pr.category, SUM(oi.quantity * oi.unit_price) AS category_total
+ FROM order_items oi
+ JOIN products pr ON pr.product_id = oi.product_id
+ GROUP BY pr.category
+ HAVING SUM(oi.quantity * oi.unit_price) > 100000
+ ORDER BY category_total DESC;
